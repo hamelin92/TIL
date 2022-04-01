@@ -1,3 +1,4 @@
+import math
 def solution(fees, records):
 	from collections import defaultdict
 	answer = []
@@ -23,12 +24,14 @@ def solution(fees, records):
 			minutes += end - check_in
 		minutes -= fees[0]
 		fee += fees[1]
+		# if minutes > 0:
+		# 	additional = divmod(minutes, fees[2])
+		# 	if additional[1] > 0:
+		# 		fee += (additional[0]+1) * fees[3]
+		# 	else:
+		# 		fee += additional[0] * fees[3]
 		if minutes > 0:
-			additional = divmod(minutes, fees[2])
-			if additional[1] > 0:
-				fee += (additional[0]+1) * fees[3]
-			else:
-				fee += additional[0] * fees[3]
+			fee += math.ceil((minutes)/fees[2])*fees[3]
 		answer.append(fee)
 	print(answer)
 	return answer

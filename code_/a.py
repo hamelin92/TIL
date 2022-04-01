@@ -1,9 +1,8 @@
+import time
+start = time.time()
 a = 0
-b = 1
-cnt = 0
-while b == 0 :
-    cnt += 1
-else:
-    a += 1
-
+for i in range(100000, 2100000):
+    #a += i*i
+    a += i**2
 print(a)
+print(time.time()-start)

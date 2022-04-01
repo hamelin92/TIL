@@ -10,7 +10,6 @@ def check(number): #단조 증가 수인지 체크하는 함수
             return 0
     else:
         return 1
-
 T = int(input())
 for tc in range(1, T+1):
     N = int(input()) # N 입력 1 ~ 1000
