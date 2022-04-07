@@ -48,7 +48,6 @@ for tc in range(1, T+1):
             else:
                 nd = ways[0][0]
                 length = ways[0][1]
-                print(f'{cores[i]} 방향{nd}, 거리 {length}')
                 tmp_core += 1
                 tmp_min += length-1
                 for w in range(1, length):
@@ -57,7 +56,7 @@ for tc in range(1, T+1):
                     check[ni][nj] = 1
 
         else:
-            print('============================================================')
+
             if tmp_core > max_core:
                 max_core = tmp_core
                 min_val = tmp_min

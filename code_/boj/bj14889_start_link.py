@@ -40,8 +40,6 @@ print(min_balance)
 
 
 
-
-
 # def my_comb(combi, idx):
 # 	global comb_cnt, N
 # 	if comb_cnt >
