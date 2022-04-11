@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+  <p>
+    {% if request.resolver_match.url_name == 'create' %}
+      <h1>Create</h1>
+    {% else %}
+      <h1>Edit</h1>
+    {% endif %}
+  </p>
+  <form action="" method="POST">
+    {% csrf_token %}
+      {{ form.as_p }}
+    {% comment %} {% for field in form %}
+      {{ field.errors }}
+      {{ field.label_tag }}
+      {{ field }}
+    {% endfor %} {% endcomment %}
+    <input type="submit">
+    {% if request.resolver_match.url_name == 'create' %}
+      <a href="{% url 'articles:index' %}">뒤로가기</a>
+    {% else %}
+      <a href="{% url 'articles:detail' article.pk %}">뒤로가기</a>
+    {% endif %}
+  </form>
+
+{% endblock content %}
