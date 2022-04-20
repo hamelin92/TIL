@@ -1424,7 +1424,7 @@ admin.site.register(Article, ArticleAdmin)
 ### Sqlite Data Type
 
 1. NULL (파이썬에서는 None)
-2. INTERGER
+2. INTEGER
    - 크기에 따라 0,1,2,3,4,5 또는 8바이트에 저장된 부호 있는 정수
 3. REAL
    - 8바이트 부동 소수점 숫자로 저장된 부동 소수점 값
@@ -1438,7 +1438,7 @@ admin.site.register(Article, ArticleAdmin)
 
   - 특정 칼럼에 저장하도록 권장되는 데이터 타입
 
-  1. INTERGER
+  1. INTEGER
   2. TEXT
   3. BLOB
   4. REAL
@@ -1466,7 +1466,7 @@ admin.site.register(Article, ArticleAdmin)
     - ALTER
   - `DML - 데이터 조작 언어`
     - INSERT : 새로운 데이터 삽입
-    - UPDATE : 저장되어있는 데이터 조회
+    - UPDATE : 저장되어있는 데이터 갱신
     - DELETE : 저장되어있는 데이터 삭제
     - SELECT : 저장되어있는 데이터 조회
   - `DCL - 데이터 제어 언어`

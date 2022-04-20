@@ -2,49 +2,52 @@ from pprint import pprint
 
 
 def solution(info, query):
+	from collections import defaultdict
+	from re import sub
+	def trans(arr):
+		arr[-1] = int(arr[-1])
+		return arr
+
 	def check(arr2):
-		global k
-		if case[i] == '-':
-			return True
-		elif case[i][0] != arr2[i][0]:
-			return False
+		for j in range(4):
+			if case[j] == '-':
+				continue
+			if case[j][0] != arr2[j][0]:
+				return False
 		else:
 			return True
-	def minimal(n):
-		if idx_dic.get(n) is not None:
-			return idx_dic.get(n)
-		N = len(info)
+	def minimal(n,key):
+		N = len(info_dic[key])
 		left = 0
 		right = N-1
-		if n > int(info[right][4]):
+		if n > info_dic[key][right]:
 			return N
-		elif n < int(info[left][4]):
+		elif n <= info_dic[key][left]:
 			return 0
 		while left < right:
 			mid = (left+right)//2
-			if mid+1 < N and int(info[mid][4]) < n <= int(info[mid+1][4]):
-				idx_dic[n] = mid+1
+			if mid+1 < N and info_dic[key][mid] < n <= info_dic[key][mid+1]:
 				return mid+1
-			elif int(info[mid][4]) < n:
+			elif info_dic[key][mid] < n:
 				left = mid+1
 			else:
 				right = mid
-
 	answer = []
-	info = [p.split() for p in info]
-	info.sort(key=lambda x: int(x[4]))
-	N = len(info)
-	idx_dic = dict()
-	query = [list(filter(lambda x: x[0] != 'a', q.split())) for q in query]
+
+	info = [trans(p.split()) for p in info]
+	print(info)
+	info.sort(key=lambda x: x[4])
+	info_dic = defaultdict(list)
+	for i in info:
+		info_dic[(i[0], i[1], i[2], i[3])].append(i[4])
+	query = [sub('and','', q).split() for q in query]
 	for case in query:
-		n = minimal(int(case[-1]))
-		tmp_list = info[n:]
-		for i in range(4):
-			k = i
-			tmp_list = list(filter(check, tmp_list))
-		result = len(tmp_list)
+		fkeys = list(filter(check, info_dic.keys()))
+		result = 0
+		for key in fkeys:
+			n = minimal(int(case[-1]),key)
+			result += len(info_dic[key]) - n
 		answer.append(result)
-	print(answer)
 	return answer
 
 

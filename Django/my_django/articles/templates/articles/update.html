@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>CREATE</h1>
+  <hr>
+  <form action="{% url 'articles:update' article.pk %}" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" class="btn btn-primary my-1" value="작성">
+  </form>
+  <a href="{% url 'articles:detail' article.pk %}"><button class="btn btn-secondary my-1">뒤로</button></a>
+{% endblock content %}

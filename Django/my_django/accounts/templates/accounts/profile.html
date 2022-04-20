@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ person.username }}님의 프로필</h1>
+
+{% with followers=person.followers.all followings=person.followings.all %}
+  <div class="my-3">
+    <h4>팔로워 : {{ followers|length }} / 팔로우 : {{ followings|length }}</h4>
+  </div>
+  <div>
+    {% if user != person %}
+      <form action="{% url 'accounts:follow' person.pk %}" method="POST">
+        {% csrf_token %}
+        {% if user in followers %}
+        <i class="fa-solid fa-heart mx-1" style="color:red"></i>
+        <button class="btn btn-primary btn-sm" type="submit">언팔로우</button>
+        {% else %}
+        <i class="fa-solid fa-heart mx-1" style="color:black"></i>
+        <button class="btn btn-outline-primary btn-sm" type="submit">팔로우하기</button>
+        {% endif %}
+      </form>
+    {% endif %}
+  </div>
+{% endwith %}
+<hr>
+<h2> {{ person.username }}이 작성한 게시글</h2>
+{% for article in person.article_set.all %}
+  <p><a href="{% url 'articles:detail' article.pk %}" class="text-decoration-none text-primary">{{ article.title }}</a> / <i class="fa-solid fa-heart" style="color:red"> <span style="color:black"> {{ article.like_users.all|length }}</span></i></p>
+{% endfor %}
+<hr>
+<h2> {{ person.username }}이 작성한 댓글</h2>
+{% for comment in person.comment_set.all %}
+  <p><a href="{% url 'articles:detail' comment.article.pk %}" class="text-decoration-none text-primary">{{ comment.content }}</a> / <i class="fa-solid fa-thumbs-up" style="color:blue"> <span style="color:black"> {{ comment.like_users.all|length }}</span></i></p>
+{% endfor %}
+<hr>
+<h2> {{ person.username }}이 좋아요를 누른 게시글</h2>
+{% for article in person.like_articles.all %}
+<p><a href="{% url 'articles:detail' article.pk %}" class="text-decoration-none text-primary">{{article.user }} : {{ article.title }}</a></p>
+{% endfor %}
+<hr>
+<h2> {{ person.username }}이 좋아요를 누른 댓글</h2>
+{% for comment in person.like_comments.all %}
+  <p><a href="{% url 'articles:detail' comment.article.pk %}" class="text-decoration-none text-primary">{{ comment.user }} : {{ comment.content }}</a></p>
+{% endfor %}
+<hr>
+
+<a href="{% url 'articles:index' %}"><button type="button" class="btn btn-primary mx-1">뒤로</button></a>
+
+{% endblock content %}
