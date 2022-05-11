@@ -5,16 +5,19 @@ def solution(relation):
     keys = []
     for k in range(1,r+1):
         for cb in combinations(range(r),k):
+            # 최소성 체크
             for key in keys:
-                if key.issubset(set(cb)):
+                if key.issubset(cb):
                     break
             else:
+                # 유일성 체크
                 rec = set()
                 for rel in relation:
                     rec.add(tuple([rel[i] for i in cb]))
-                if len(rec) == n:
+                if len(rec) == n: # 테스트 통과
                     keys.append(set(cb))
     answer = len(keys)
+    print(keys)
     return answer
 
 solution([

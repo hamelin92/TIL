@@ -3,8 +3,8 @@ from collections import deque
 T = int(input())
 for tc in range(1,T+1):
     N,M,K,A,B = map(int, input().split())
-    a = list(map(int, input().split()))
-    b = list(map(int, input().split()))
+    a = list(map(int, input().split())) # 접수창구 번호별 걸리는 시간
+    b = list(map(int, input().split())) # 정비창구 번호별 걸리는 시간 리스트
     t = list(enumerate(map(int, input().split()), 1))
     answer = 0
     time_k = t[0][1]
