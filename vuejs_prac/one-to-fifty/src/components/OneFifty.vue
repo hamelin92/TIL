@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1 @click="keyDown()">1 to 50</h1>
+    <h1 @click="infMode()">INF START</h1>
     {{this.title}}
     {{this.minutes}}
     {{this.seconds}}
@@ -83,7 +84,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['keyDown',]),
+    ...mapActions(['keyDown','infMode']),
 
     startTimer: function() {
       this.timer = setInterval(() => this.countdown(), 1000);
