@@ -1,26 +1,24 @@
 <template>
   <div id="app">
-    <one-fifty></one-fifty>
+    <nav>
+      <router-link to="/">Home</router-link> |
+      <a href="/about">About</a>|
+      <router-link to="/new">New</router-link>
+    </nav>
+    <router-view/>
   </div>
 </template>
-
 <script>
-import OneFifty from '@/components/OneFifty'
-
 export default {
   name: 'App',
-  components: {
-    OneFifty,
-  },
-  computed: {
+  data() {
+    return {
+     
+    }
+  }
 
-  },
-  methods: {
-
-  },
 }
 </script>
-
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -28,6 +26,14 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>

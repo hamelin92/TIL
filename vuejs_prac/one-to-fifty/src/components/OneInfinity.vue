@@ -1,6 +1,6 @@
 <template>
-  <div id="1to50-stan">
-    <h1>1 to 50</h1>
+  <div id="1to50-inf">
+    <h1>1 to INFINITY</h1>
     <div style="background-color: brown; font-weight: bold;" @click="gameStart()">START</div>
     {{this.title}}
     {{this.minutes}}
@@ -8,7 +8,7 @@
     <input type="button" @click="startTimer" value="start">
     <input type="button" @click="resetTimer" value="reset">
     <input type="button" @click="stopTimer" value="stop">
-    <h1> MISS:{{ $store.state.miss}} </h1>
+    <h1> MISS:{{ $store.state.miss_inf}} </h1>
     <div>
       <span class="test" id="q">
         <span style="font-weight: bold; font-size: 2rem">{{ $store.state.numbers_now['q']}}</span>
@@ -57,34 +57,39 @@ export default {
       timer: null,
       totalTime: (1 * 60),
       resetButton: false, 
-      keyDown: function (e) {
+      eventFunc: function (e) {
         const key = document.getElementById(e.key);
         if (key) key.classList.add('pressed');
       },
-      keyUp: (e) => {
+      eventFunc2: (e) => {
         const key2 = document.getElementById(e.key);
 
         if (key2) key2.classList.remove('pressed');
         if (this.$store.state.numbers_now[e.key] == this.$store.state.number+1) {
-          this.$store.commit('NUMBER_SETTER', e.key)
+          this.$store.commit('INF_NUM_SETTER', e.key)
+          if (this.$store.state.number%9 == 0) {
+            this.$store.commit('EXTENSION', this.$store.state.number)
+          }
         } else if ((e.key in this.$store.state.numbers_now)) {
-          this.$store.commit('COUNT_MISS')
+          this.$store.commit('COUNT_MISS_INF')
         }
-        if (this.$store.state.number == 50) {
-          this.$store.commit('STANDARD_FINISHED')
-          console.log('finished')
-        }
+        // if (this.$store.state.number == 50) {
+        //   this.$store.commit('STANDARD_FINISHED')
+        //   console.log('finished')
+        // }
       }
+
     }
   },
   methods: {
     ...mapActions(['clearState']),
-    gameStart() { 
+    gameStart() {
       this.$store.commit('START')
       this.$store.commit('SETTER')
-      this.$store.commit('STAN_NEXT_NUMS')
-      document.addEventListener("keydown", this.keyDown);
-      document.addEventListener("keyup", this.keyUp)
+      this.$store.commit('INF_NEXT_NUMS')
+
+      document.addEventListener("keydown", this.eventFunc);
+      document.addEventListener("keyup", this.eventFunc2)
     },
     startTimer: function() {
       this.timer = setInterval(() => this.countdown(), 1000);
@@ -114,8 +119,8 @@ export default {
     },
   },
   created() {
-    document.removeEventListener("keydown", this.eventFunc);
-    document.removeEventListener("keyup", this.eventFunc2)
+    document.removeEventListener("keydown", document.eventFunc);
+    document.removeEventListener("keyup", document.eventFunc2)
     return this.clearState
   },
   computed: {
