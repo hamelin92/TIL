@@ -1,9 +1,13 @@
 <template>
   <div id="app">
     <nav>
-      <router-link to="/">Home</router-link> |
+      <a href="/">Home</a> |
       <a href="/about">About</a>|
-      <router-link to="/new">New</router-link>
+      <a href="/new/1to50">1to50</a>.
+      <a href="/new/1toINF">1toINF</a>.
+      
+      <!-- <router-link :to="{name: 'new', params: { gamename: '1to50'}}">1to50</router-link>
+      <router-link :to="{name: 'new', params: { gamename: '1toINF'}}">1toINF</router-link> -->
     </nav>
     <router-view/>
   </div>

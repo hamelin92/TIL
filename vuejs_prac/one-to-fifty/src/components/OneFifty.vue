@@ -1,13 +1,12 @@
 <template>
   <div id="1to50-stan">
-    <h1>1 to 50</h1>
+    <h1 @click="routerTest()">1 to 50</h1> ///// <span @click="clearListener"> CLEAR</span>
     <div style="background-color: brown; font-weight: bold;" @click="gameStart()">START</div>
     {{this.title}}
-    {{this.minutes}}
-    {{this.seconds}}
-    <input type="button" @click="startTimer" value="start">
-    <input type="button" @click="resetTimer" value="reset">
-    <input type="button" @click="stopTimer" value="stop">
+    {{this.seconds}}.{{this.mseconds}}
+    <input type="button" @click="startTimer()" value="start">
+    <input type="button" @click="resetTimer()" value="reset">
+    <input type="button" @click="stopTimer()" value="stop">
     <h1> MISS:{{ $store.state.miss}} </h1>
     <div>
       <span class="test" id="q">
@@ -55,7 +54,7 @@ export default {
     return {
       title: 'Timer',
       timer: null,
-      totalTime: (1 * 60),
+      totalTime: (0 * 6000),
       resetButton: false, 
       keyDown: function (e) {
         const key = document.getElementById(e.key);
@@ -69,9 +68,11 @@ export default {
           this.$store.commit('NUMBER_SETTER', e.key)
         } else if ((e.key in this.$store.state.numbers_now)) {
           this.$store.commit('COUNT_MISS')
+          this.totalTime += 100
         }
         if (this.$store.state.number == 50) {
           this.$store.commit('STANDARD_FINISHED')
+          this.stopTimer()
           console.log('finished')
         }
       }
@@ -79,15 +80,25 @@ export default {
   },
   methods: {
     ...mapActions(['clearState']),
+    routerTest() {
+      console.log(this.$router)
+      // this.$router.go('/new')
+    },
     gameStart() { 
+      this.resetTimer()
+      this.startTimer()
       this.$store.commit('START')
       this.$store.commit('SETTER')
       this.$store.commit('STAN_NEXT_NUMS')
       document.addEventListener("keydown", this.keyDown);
       document.addEventListener("keyup", this.keyUp)
     },
+    clearListener() {
+      document.removeEventListener("keydown", this.keyDown);
+      document.removeEventListener("keyup", this.keyUp)
+    },
     startTimer: function() {
-      this.timer = setInterval(() => this.countdown(), 1000);
+      this.timer = setInterval(() => this.countup(), 10);
       this.resetButton = true;
     },
     stopTimer: function() {
@@ -96,7 +107,7 @@ export default {
       this.resetButton = true;
     },
     resetTimer: function() {
-      this.totalTime = (1 * 60);
+      this.totalTime = (0 * 6000);
       clearInterval(this.timer);
       this.timer = null;
       this.resetButton = false;
@@ -104,9 +115,9 @@ export default {
     padTime: function(time) {
       return (time < 10 ? '0' : '') + time;
     },
-    countdown: function() {
-      if(this.totalTime >= 1) {
-        this.totalTime--;
+    countup: function() {
+      if(this.totalTime >= 0) {
+        this.totalTime++;
       } else {
         this.totalTime = 0;
         this.resetTimer;
@@ -114,17 +125,15 @@ export default {
     },
   },
   created() {
-    document.removeEventListener("keydown", this.eventFunc);
-    document.removeEventListener("keyup", this.eventFunc2)
     return this.clearState
   },
   computed: {
-    minutes: function() {
-      const minutes = Math.floor(this.totalTime / 60);
+    seconds: function() {
+      const minutes = Math.floor(this.totalTime / 100);
       return this.padTime(minutes);
     },
-    seconds: function() {
-      const seconds = this.totalTime - (this.minutes * 60);
+    mseconds: function() {
+      const seconds = this.totalTime - (this.seconds * 100);
       return this.padTime(seconds);
     },
   },
