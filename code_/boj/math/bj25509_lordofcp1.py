@@ -1,3 +1,6 @@
+from math import lcm, log10
+import sys
+
 def gadd(x, y):
     return [x[0]+y[0], x[1]+y[1]]
 
@@ -47,8 +50,10 @@ def charpoly(mat, m):
     return c
 
 
-n, M = map(int, input().split())
-A = [list(map(int, input().split())) for _ in range(n)]
+n, M = map(int, sys.stdin.readline().split())
+A = [list(map(int, sys.stdin.readline().split())) for _ in range(n)]
 poly = charpoly(A, M)
 for c_i in poly[::-1]:
     print(c_i%M)
+
+
