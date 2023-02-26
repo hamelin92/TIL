@@ -5,4 +5,4 @@ for i in range(n):
     for i in range(len(row)-1,0,-1):
         tri_sums[i] = max(tri_sums[i], tri_sums[i-1]) + row[i]
     tri_sums[0] += row[0]
-    print(tri_sums)
+print(max(tri_sums))

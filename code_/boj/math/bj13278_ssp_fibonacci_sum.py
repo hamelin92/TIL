@@ -10,6 +10,9 @@ def vec_sum(v1, v2):
     return ((v1[0]+v2[0])%33330, v1[1]+v2[1])
 
 
+def FFT(dict=, w):
+
+
 def poly_multiplication(dict1, dict2):
     global K
     ans_dict = {(0,0): 1}

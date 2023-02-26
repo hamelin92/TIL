@@ -1,59 +1,106 @@
-from math import lcm, log10
 import sys
 
-def gadd(x, y):
-    return [x[0]+y[0], x[1]+y[1]]
+def multiply(mat1, mat2):
+    # mat1, mat2 : 2 by 2 matrices
+    s1 = mat1[1][0] + mat1[1][1]
+    s2 = s1 - mat1[0][0]
+    s3 = mat2[0][1]-mat2[0][0]
+    s4 = mat2[1][1] - s3
+    m2 = mat1[0][0] * mat2[0][0]
+    m5 = s1*s3
+    t1 = s2*s4+m2
+    t2 = t1+(mat1[0][0]-mat1[1][0])*(mat2[1][1]-mat2[0][1])
+    return [[m2+mat1[0][1] * mat2[1][0], t1+m5+(mat1[0][1]-s2)*mat2[1][1]],[t2-mat1[1][1]*(s4-mat2[1][0]), t2+m5]]
 
+def matadd(A, B):
+    N = len(A)
+    result = [[0]*N for _ in range(N)]
+    for i in range(N):
+        for j in range(N):
+            result[i][j] = A[i][j] + B[i][j]
+    return result
 
-def gsum(arr):
-    return [sum([a[0] for a in arr]), sum([a[1] for a in arr])]
+def matadd_c(A, const):
+    N = len(A)
+    result = [r[:] for r in A[:]]
+    for i in range(N):
+        result[i][i] += const
+    return result
 
+def matsub(A, B):
+    N = len(A)
+    result = [[0]*N for _ in range(N)]
+    for i in range(N):
+        for j in range(N):
+            result[i][j] = A[i][j] - B[i][j]
+    return result
 
-def gmul(x, y):
-    global D
-    return [x[0]*y[0]+x[1]*y[1]*D, x[0]*y[1]+x[1]*y[0]]
+def strassen_mul(A, B):
+    # A, B must be 2**k by 2**k matrices
+    N = len(A)
+    if N == 2:
+        return multiply(A, B)
+    n = N//2
+    A11 = [c[:n] for c in A[:n]]
+    A12 = [c[n:] for c in A[:n]]
+    A21 = [c[:n] for c in A[n:]]
+    A22 = [c[n:] for c in A[n:]]
+    B11 = [c[:n] for c in B[:n]]
+    B12 = [c[n:] for c in B[:n]]
+    B21 = [c[:n] for c in B[n:]]
+    B22 = [c[n:] for c in B[n:]]
+    S1 = matadd(A21, A22)
+    S2 = matsub(S1, A11)
+    S3 = matsub(B12, B11)
+    S4 = matsub(B22, S3)
+    M1 = strassen_mul(S2, S4)
+    M2 = strassen_mul(A11, B11)
+    M3 = strassen_mul(A12, B21)
+    M4 = strassen_mul(matsub(A11, A21), matsub(B22, B12))
+    M5 = strassen_mul(S1, S3)
+    M6 = strassen_mul(matsub(A12, S2), B22)
+    M7 = strassen_mul(A22, matsub(S4, B21))
+    T1 = matadd(M1, M2)
+    T2 = matadd(T1, M4)
+    C11 = matadd(M2, M3)
+    C12 = matadd(T1, matadd(M5, M6))
+    C21 = matsub(T2, M7)
+    C22 = matadd(T2, M5)
+    return [C11[i]+C12[i] for i in range(n)] + [C21[i] + C22[i] for i in range(n)]
 
-
-def matadd(mat1, mat2):
-    N = len(mat1)
-    return [[mat1[i][j]+mat2[i][j] for j in range(N)] for i in range(N)]
-
-
-def matadd_c(mat, cons):
-    N = len(mat)
-    return [[mat[i][j]+cons if i == j else mat[i][j] for j in range(N)] for i in range(N)]
-
-
-def matmul(mat1, mat2):
-    N = len(mat1)
-    return [[sum([mat1[i][k]*mat2[k][j] for k in range(N)]) for j in range(N)] for i in range(N)]
-
-
-def matmul_c(mat, cons):
-    N = len(mat)
-    return [[mat[i][j]*cons for j in range(N)] for i in range(N)]
-
+def strassen(A, B):
+    N = len(A)
+    resize = 1<<(N-1).bit_length()
+    dif = resize-N
+    if N != resize:
+        A_ex = [A[i][:]+[0]*dif if i < N else [0]*resize for i in range(resize)]
+        B_ex = [B[i][:]+[0]*dif if i < N else [0]*resize for i in range(resize)]
+    else:
+        A_ex = A
+        B_ex = B
+    res = strassen_mul(A_ex, B_ex)
+    return [res[i][:N] for i in range(N)]
 
 def mattr(mat):
     N = len(mat)
     return sum([mat[i][i] for i in range(N)])
 
 
-def charpoly(mat, m):
+def charpoly(mat):
     N = len(A)
-    c = [1]
+    c = [1] + [False]*N
     for k in range(1, N+1):
         if k > 1:
-            mat = matmul(A, matadd_c(mat, c[-1]))
+            mat = strassen(A, matadd_c(mat, c[k-1]))
         tr = mattr(mat)
-        c.append(-tr//k)
+        c[k] = -tr//k
     return c
-
 
 n, M = map(int, sys.stdin.readline().split())
 A = [list(map(int, sys.stdin.readline().split())) for _ in range(n)]
-poly = charpoly(A, M)
+I = [[0]*n for _ in range(n)]
+for i in range(n):
+    I[i][i] = 1
+poly = charpoly(A)
 for c_i in poly[::-1]:
     print(c_i%M)
-
-
