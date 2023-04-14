@@ -1,8 +1,8 @@
 import time
 
-def matmul_ijk(mat1, mat2):
-    N = len(mat2)
-    return [[sum(row[k]*mat2[k][j] for k in range(N)) for j in range(N)] for row in mat1]
+# def matmul_ijk(mat1, mat2):
+#     N = len(mat2)
+#     return [[sum(row[k]*mat2[k][j] for k in range(N)) for j in range(N)] for row in mat1]
 
 def multiply(mat1, mat2):
     # mat1, mat2 : 2 by 2 matrices
@@ -19,7 +19,7 @@ def multiply(mat1, mat2):
 
 def matadd(A, B):
     N = len(A)
-    result = [[0]*N for _ in range(N)]
+    result = [[0 for k in range(N)] for _ in range(N)]
     for i in range(N):
         for j in range(N):
             result[i][j] = A[i][j] + B[i][j]
@@ -83,12 +83,60 @@ def strassen(A, B):
     return [res[i][:N] for i in range(N)]
 
 
+def coppersmith_winograd(A, B):
+    n = len(A)
+    C = [[0 for i in range(n)] for j in range(n)]
+    if n == 1:
+        C[0][0] = A[0][0] * B[0][0]
+    else:
+        A11 = [[0 for i in range(n//2)] for j in range(n//2)]
+        A12 = [[0 for i in range(n//2)] for j in range(n//2)]
+        A21 = [[0 for i in range(n//2)] for j in range(n//2)]
+        A22 = [[0 for i in range(n//2)] for j in range(n//2)]
+        B11 = [[0 for i in range(n//2)] for j in range(n//2)]
+        B12 = [[0 for i in range(n//2)] for j in range(n//2)]
+        B21 = [[0 for i in range(n//2)] for j in range(n//2)]
+        B22 = [[0 for i in range(n//2)] for j in range(n//2)]
+        for i in range(n//2):
+            for j in range(n//2):
+                A11[i][j] = A[i][j]
+                A12[i][j] = A[i][j+n//2]
+                A21[i][j] = A[i+n//2][j]
+                A22[i][j] = A[i+n//2][j+n//2]
+                B11[i][j] = B[i][j]
+                B12[i][j] = B[i][j+n//2]
+                B21[i][j] = B[i+n//2][j]
+                B22[i][j] = B[i+n//2][j+n//2]
+        M1 = coppersmith_winograd(matadd(A11, A22), matadd(B11, B22))
+        M2 = coppersmith_winograd(matadd(A21, A22), B11)
+        M3 = coppersmith_winograd(A11, matsub(B12, B22))
+        M4 = coppersmith_winograd(A22, matsub(B21, B11))
+        M5 = coppersmith_winograd(matadd(A11, A12), B22)
+        M6 = coppersmith_winograd(matsub(A21, A11), matadd(B11, B12))
+        M7 = coppersmith_winograd(matsub(A12, A22), matadd(B21, B22))
+        C11 = matadd(matsub(matadd(M1, M4), M5), M7)
+        C12 = matadd(M3, M5)
+        C21 = matadd(M2, M4)
+        C22 = matadd(matsub(matadd(M1, M3), M2), M6)
+        for i in range(n//2):
+            for j in range(n//2):
+                C[i][j] = C11[i][j]
+                C[i][j+n//2] = C12[i][j]
+                C[i+n//2][j] = C21[i][j]
+                C[i+n//2][j+n//2] = C22[i][j]
+    return C
+
+
 N = int(input())
 A = [list(range(i, N+i)) for i in range(N)]
 print("start")
 start_str = time.time()
-strassen(A, A)
+mata= strassen(A, A)
 print("strassen",time.time()-start_str)
+start_str = time.time()
+matb = coppersmith_winograd(A, A)
+print("coppersmith_winograd",time.time()-start_str)
 start_ijk = time.time()
-matmul_ijk(A, A)
+matc = matmul_ijk(A, A)
 print("ijk",time.time()-start_str)
+print(matsub(mata, matb), matsub(matb, matc))
